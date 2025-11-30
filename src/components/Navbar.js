@@ -10,6 +10,8 @@ const Navbar = () => {
   if (token) {
     try {
       user = jwtDecode(token);
+      debugger;
+      console.log(user);
     } catch (error) {
       localStorage.removeItem('token');
     }

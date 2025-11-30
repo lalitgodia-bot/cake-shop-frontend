@@ -60,7 +60,7 @@ const Products = () => {
           <div key={cake.cakeId} className="col-md-4 mb-4">
             <div className="card">
               <img 
-                src={cake.imageUrl || '/placeholder-cake.jpg'} 
+                src={ cake.imageUrl || require('../placeholder-cake.jpg')} 
                 className="card-img-top" 
                 alt={cake.name}
                 style={{ height: '200px', objectFit: 'cover' }}
