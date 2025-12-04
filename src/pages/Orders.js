@@ -17,6 +17,7 @@ const Orders = () => {
     }
   }
 
+  useEffect(() => {
    const fetchOrders = async () => {
     try {
       const response = await ordersAPI.getAll();
@@ -30,9 +31,9 @@ const Orders = () => {
     }
   };
 
-  useEffect(() => {
+
     fetchOrders();
-  }, [fetchOrders]);
+  }, []);
 
  
 
