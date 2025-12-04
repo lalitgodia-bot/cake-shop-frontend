@@ -17,11 +17,7 @@ const Orders = () => {
     }
   }
 
-  useEffect(() => {
-    fetchOrders();
-  }, []);
-
-  const fetchOrders = async () => {
+   const fetchOrders = async () => {
     try {
       const response = await ordersAPI.getAll();
       // Filter orders for current user
@@ -33,6 +29,12 @@ const Orders = () => {
       setLoading(false);
     }
   };
+
+  useEffect(() => {
+    fetchOrders();
+  }, [fetchOrders]);
+
+ 
 
   if (loading) return <div className="container mt-5">Loading...</div>;
 
