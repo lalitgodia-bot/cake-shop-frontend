@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { ordersAPI } from '../services/api';
 import { jwtDecode } from 'jwt-decode';
 
@@ -18,21 +18,19 @@ const Orders = () => {
   }
 
   useEffect(() => {
+    const fetchOrders = async () => {
+      try {
+        const response = await ordersAPI.getAll();
+        const userOrders = response.data.filter(order => order.userId === parseInt(userId));
+        setOrders(userOrders);
+      } catch (error) {
+        console.error('Error fetching orders:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
     fetchOrders();
-  }, []);
-
-  const fetchOrders = async () => {
-    try {
-      const response = await ordersAPI.getAll();
-      // Filter orders for current user
-      const userOrders = response.data.filter(order => order.userId === parseInt(userId));
-      setOrders(userOrders);
-    } catch (error) {
-      console.error('Error fetching orders:', error);
-    } finally {
-      setLoading(false);
-    }
-  };
+  }, [userId]);
 
   if (loading) return <div className="container mt-5">Loading...</div>;
 

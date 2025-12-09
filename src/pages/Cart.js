@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { cartItemsAPI, ordersAPI } from '../services/api';
 import { jwtDecode } from 'jwt-decode';
 
