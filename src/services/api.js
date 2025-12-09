@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const API_BASE_URL = 'https://localhost:5001/api';
+const API_BASE_URL = 'https://cakeshopapiamazonq-production.up.railway.app/api';
 
 const api = axios.create({
   baseURL: API_BASE_URL,
