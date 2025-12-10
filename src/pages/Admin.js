@@ -14,6 +14,11 @@ const Admin = () => {
     imageUrl: '',
     isAvailable: true
   });
+  const [newCategory, setNewCategory] = useState({
+    categoryName: '',
+    description: ''
+  });
+  const [editingCategory, setEditingCategory] = useState(null);
 
   useEffect(() => {
     fetchData();
@@ -56,6 +61,53 @@ const Admin = () => {
     }
   };
 
+  const handleAddCategory = async (e) => {
+    e.preventDefault();
+    try {
+      await categoriesAPI.create(newCategory);
+      setNewCategory({ categoryName: '', description: '' });
+      fetchData();
+    } catch (error) {
+      console.error('Error adding category:', error);
+    }
+  };
+
+  const handleUpdateCategory = async (e) => {
+    e.preventDefault();
+    try {
+      await categoriesAPI.update(editingCategory.categoryId, newCategory);
+      setNewCategory({ categoryName: '', description: '' });
+      setEditingCategory(null);
+      fetchData();
+    } catch (error) {
+      console.error('Error updating category:', error);
+    }
+  };
+
+  const editCategory = (category) => {
+    setNewCategory({
+      categoryName: category.categoryName,
+      description: category.description
+    });
+    setEditingCategory(category);
+  };
+
+  const cancelEdit = () => {
+    setNewCategory({ categoryName: '', description: '' });
+    setEditingCategory(null);
+  };
+
+  const deleteCategory = async (id) => {
+    if (window.confirm('Are you sure you want to delete this category?')) {
+      try {
+        await categoriesAPI.delete(id);
+        fetchData();
+      } catch (error) {
+        console.error('Error deleting category:', error);
+      }
+    }
+  };
+
   const deleteCake = async (id) => {
     if (window.confirm('Are you sure?')) {
       try {
@@ -74,10 +126,18 @@ const Admin = () => {
       <ul className="nav nav-tabs">
         <li className="nav-item">
           <button 
+            className={`nav-link ${activeTab === 'categories' ? 'active' : ''}`}
+            onClick={() => setActiveTab('categories')}
+          >
+            Categories
+          </button>
+        </li>
+        <li className="nav-item">
+          <button 
             className={`nav-link ${activeTab === 'cakes' ? 'active' : ''}`}
             onClick={() => setActiveTab('cakes')}
           >
-            Manage Cakes
+            Cakes
           </button>
         </li>
         <li className="nav-item">
@@ -91,6 +151,83 @@ const Admin = () => {
       </ul>
 
       <div className="tab-content mt-4">
+        {activeTab === 'categories' && (
+          <div>
+            <div className="row">
+              <div className="col-md-4">
+                <h4>{editingCategory ? 'Edit Category' : 'Add New Category'}</h4>
+                <form onSubmit={editingCategory ? handleUpdateCategory : handleAddCategory}>
+                  <div className="mb-3">
+                    <input
+                      type="text"
+                      className="form-control"
+                      placeholder="Category Name"
+                      value={newCategory.categoryName}
+                      onChange={(e) => setNewCategory({...newCategory, categoryName: e.target.value})}
+                      required
+                    />
+                  </div>
+                  <div className="mb-3">
+                    <textarea
+                      className="form-control"
+                      placeholder="Description"
+                      value={newCategory.description}
+                      onChange={(e) => setNewCategory({...newCategory, description: e.target.value})}
+                      required
+                    />
+                  </div>
+                  <button type="submit" className="btn btn-primary me-2">
+                    {editingCategory ? 'Update' : 'Add'} Category
+                  </button>
+                  {editingCategory && (
+                    <button type="button" className="btn btn-secondary" onClick={cancelEdit}>
+                      Cancel
+                    </button>
+                  )}
+                </form>
+              </div>
+              <div className="col-md-8">
+                <h4>Existing Categories</h4>
+                <div className="table-responsive">
+                  <table className="table">
+                    <thead>
+                      <tr>
+                        <th>Name</th>
+                        <th>Description</th>
+                        <th>Created</th>
+                        <th>Actions</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {categories.map(category => (
+                        <tr key={category.categoryId}>
+                          <td>{category.categoryName}</td>
+                          <td>{category.description}</td>
+                          <td>{new Date(category.createdAt).toLocaleDateString()}</td>
+                          <td>
+                            <button 
+                              className="btn btn-sm btn-warning me-2"
+                              onClick={() => editCategory(category)}
+                            >
+                              Edit
+                            </button>
+                            <button 
+                              className="btn btn-sm btn-danger"
+                              onClick={() => deleteCategory(category.categoryId)}
+                            >
+                              Delete
+                            </button>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+
         {activeTab === 'cakes' && (
           <div>
             <div className="row">
